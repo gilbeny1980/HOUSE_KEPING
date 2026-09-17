@@ -1,0 +1,48 @@
+// Prisma schema for the House Keeping equipment distribution tracker
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  records DistributionRecord[]
+}
+
+model Item {
+  id        String   @id @default(cuid())
+  name      String
+  unit      String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  records DistributionRecord[]
+}
+
+model DistributionRecord {
+  id        String   @id @default(cuid())
+  quantity  Float
+  note      String?
+  createdAt DateTime @default(now())
+
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([departmentId])
+  @@index([itemId])
+  @@index([createdAt])
+}
