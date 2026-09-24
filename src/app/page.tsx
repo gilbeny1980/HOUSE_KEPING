@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { deleteDistributionRecord } from "@/app/actions";
 import { isViewer } from "@/lib/role";
 import { formatQty, formatDateTime } from "@/lib/labels";
+import { monthKey, formatMonthLabel } from "@/lib/period";
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +21,17 @@ export default async function HomePage() {
   const activeDepartments = departments.filter((d) => d.active);
   const activeItems = items.filter((i) => i.active);
 
+  const currentMonth = monthKey(new Date());
+  const monthRecords = records.filter(
+    (r) => monthKey(r.createdAt) === currentMonth,
+  );
+
   const totalsByDeptItem = new Map<string, Map<string, number>>();
   const totalByItem = new Map<string, number>();
   const totalByDept = new Map<string, number>();
   let grandTotal = 0;
 
-  for (const record of records) {
+  for (const record of monthRecords) {
     const deptTotals = totalsByDeptItem.get(record.departmentId) ?? new Map();
     deptTotals.set(
       record.itemId,
@@ -69,7 +75,7 @@ export default async function HomePage() {
 
       <div className="flex flex-wrap gap-3 text-sm">
         <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
-          סה&quot;כ יחידות שחולקו: <b>{formatQty(grandTotal)}</b>
+          סה&quot;כ יחידות החודש: <b>{formatQty(grandTotal)}</b>
         </span>
         <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
           מחלקות פעילות: <b>{activeDepartments.length}</b>
@@ -80,12 +86,20 @@ export default async function HomePage() {
       </div>
 
       <section className="space-y-2">
-        <h2 className="font-bold text-slate-800">
-          היסטוריה - מה לקחו ומי לקח
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-bold text-slate-800">
+            היסטוריה - מה לקחו ומי לקח ({formatMonthLabel(currentMonth)})
+          </h2>
+          <Link
+            href="/reports"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            צפייה בחודשים קודמים ←
+          </Link>
+        </div>
         {rowDepartments.length === 0 ? (
           <p className="rounded-lg border border-slate-200 bg-white p-6 text-center text-slate-500 shadow-sm">
-            עדיין לא נרשמו מסירות
+            עדיין לא נרשמו מסירות החודש
           </p>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">

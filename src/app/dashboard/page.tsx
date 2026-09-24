@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatQty } from "@/lib/labels";
+import { monthKey, formatMonthLabel } from "@/lib/period";
 import { BarChart } from "./BarChart";
 
 export const dynamic = "force-dynamic";
@@ -9,11 +10,16 @@ const COLOR_ITEMS = "#2a78d6";
 const COLOR_DEPARTMENTS = "#eb6834";
 
 export default async function DashboardPage() {
-  const [departments, items, records] = await Promise.all([
+  const [departments, items, allRecords] = await Promise.all([
     prisma.department.findMany(),
     prisma.item.findMany(),
     prisma.distributionRecord.findMany(),
   ]);
+
+  const currentMonth = monthKey(new Date());
+  const records = allRecords.filter(
+    (r) => monthKey(r.createdAt) === currentMonth,
+  );
 
   const totalByItem = new Map<string, number>();
   const totalByDept = new Map<string, number>();
@@ -51,22 +57,32 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-5xl w-full px-4 py-6 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-xl font-bold">דשבורד - סקירה כללית</h1>
+          <h1 className="text-xl font-bold">
+            דשבורד - סקירה כללית ({formatMonthLabel(currentMonth)})
+          </h1>
           <p className="text-sm text-slate-500">
-            תמונת מצב של חלוקת הציוד: מי לוקח הכי הרבה ומה מבוקש ביותר.
+            תמונת מצב של חלוקת הציוד החודש: מי לוקח הכי הרבה ומה מבוקש ביותר.
           </p>
         </div>
-        <Link
-          href="/"
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
-        >
-          חזרה לחלוקה והיסטוריה
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/reports"
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
+          >
+            דוחות תקופתיים
+          </Link>
+          <Link
+            href="/"
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
+          >
+            חזרה לחלוקה והיסטוריה
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3 text-sm">
         <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
-          סה&quot;כ יחידות שחולקו: <b>{formatQty(grandTotal)}</b>
+          סה&quot;כ יחידות החודש: <b>{formatQty(grandTotal)}</b>
         </span>
         <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
           מחלקות פעילות: <b>{activeDepartments}</b>
