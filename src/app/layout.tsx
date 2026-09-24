@@ -26,25 +26,33 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <span className="text-xl">📦</span>
               <span className="font-bold text-lg">מחלקת משק - חלוקת ציוד</span>
             </Link>
-            {!viewer && (
-              <nav className="flex flex-wrap gap-4 text-sm font-medium">
-                <Link href="/" className="hover:text-amber-300 transition-colors">
-                  חלוקה והיסטוריה
-                </Link>
-                <Link
-                  href="/departments"
-                  className="hover:text-amber-300 transition-colors"
-                >
-                  מחלקות
-                </Link>
-                <Link
-                  href="/items"
-                  className="hover:text-amber-300 transition-colors"
-                >
-                  פריטים
-                </Link>
-              </nav>
-            )}
+            <nav className="flex flex-wrap gap-4 text-sm font-medium">
+              <Link href="/" className="hover:text-amber-300 transition-colors">
+                חלוקה והיסטוריה
+              </Link>
+              <Link
+                href="/dashboard"
+                className="hover:text-amber-300 transition-colors"
+              >
+                דשבורד
+              </Link>
+              {!viewer && (
+                <>
+                  <Link
+                    href="/departments"
+                    className="hover:text-amber-300 transition-colors"
+                  >
+                    מחלקות
+                  </Link>
+                  <Link
+                    href="/items"
+                    className="hover:text-amber-300 transition-colors"
+                  >
+                    פריטים
+                  </Link>
+                </>
+              )}
+            </nav>
           </div>
         </header>
         <main className="flex-1 w-full flex flex-col">{children}</main>
