@@ -58,6 +58,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1 w-full flex flex-col">{children}</main>
         <footer className="bg-slate-900 text-center text-xs text-slate-400 py-2">
           <p>מערכת ניהול חלוקת ציוד פנימית - מחלקת משק</p>
+          <p>נבנה ע&quot;י גיל בן-יהודה</p>
         </footer>
       </body>
     </html>

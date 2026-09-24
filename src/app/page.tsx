@@ -50,12 +50,20 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-5xl w-full px-4 py-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-bold">חלוקת ציוד - מעקב והזנה</h1>
-        <p className="text-sm text-slate-500">
-          הזנה ידנית של מסירות ציוד למחלקות, עם היסטוריה מלאה של מה נלקח ועל
-          ידי מי.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold">חלוקת ציוד - מעקב והזנה</h1>
+          <p className="text-sm text-slate-500">
+            הזנה ידנית של מסירות ציוד למחלקות, עם היסטוריה מלאה של מה נלקח
+            ועל ידי מי.
+          </p>
+        </div>
+        <a
+          href="/api/export"
+          className="flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium hover:bg-slate-50"
+        >
+          <span>📊</span> ייצוא לאקסל
+        </a>
       </div>
 
       <div className="flex flex-wrap gap-3 text-sm">
