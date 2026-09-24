@@ -11,6 +11,7 @@ function asOrNull(value: FormDataEntryValue | null): string | null {
 
 function revalidateAll() {
   revalidatePath("/");
+  revalidatePath("/entry");
   revalidatePath("/departments");
   revalidatePath("/items");
 }
@@ -39,12 +40,19 @@ export async function createDistributionRecord(formData: FormData) {
     throw new Error("יש להזין את שם העובד שמזין את הרישום");
   }
 
+  const dateRaw = (formData.get("date") ?? "").toString();
+  const createdAt = dateRaw ? new Date(`${dateRaw}T12:00:00`) : new Date();
+  if (Number.isNaN(createdAt.getTime())) {
+    throw new Error("תאריך לא תקין");
+  }
+
   await prisma.distributionRecord.create({
     data: {
       departmentId,
       itemId,
       quantity,
       recordedBy,
+      createdAt,
       note: asOrNull(formData.get("note")),
     },
   });

@@ -45,6 +45,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               {!viewer && (
                 <>
                   <Link
+                    href="/entry"
+                    className="hover:text-amber-300 transition-colors"
+                  >
+                    הזנה ידנית
+                  </Link>
+                  <Link
                     href="/departments"
                     className="hover:text-amber-300 transition-colors"
                   >

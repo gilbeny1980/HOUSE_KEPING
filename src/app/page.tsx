@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteDistributionRecord } from "@/app/actions";
 import { isViewer } from "@/lib/role";
 import { formatQty, formatDateTime } from "@/lib/labels";
-import { AddDistributionForm } from "./AddDistributionForm";
 
 export const dynamic = "force-dynamic";
 
@@ -47,22 +47,24 @@ export default async function HomePage() {
   const rowDepartments = departments.filter((d) => totalByDept.has(d.id));
   const columnItems = items.filter((i) => totalByItem.has(i.id));
   const recentRecords = records.slice(0, 30);
-  const recordedByOptions = [
-    ...new Set(
-      records
-        .map((r) => r.recordedBy)
-        .filter((name): name is string => Boolean(name)),
-    ),
-  ].sort((a, b) => a.localeCompare(b, "he"));
 
   return (
     <div className="mx-auto max-w-5xl w-full px-4 py-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-bold">חלוקת ציוד - מעקב והזנה</h1>
-        <p className="text-sm text-slate-500">
-          הזנה ידנית של מסירות ציוד למחלקות, עם היסטוריה מלאה של מה נלקח ועל
-          ידי מי.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold">חלוקה והיסטוריה</h1>
+          <p className="text-sm text-slate-500">
+            היסטוריה מלאה של חלוקת ציוד למחלקות - מה נלקח ועל ידי מי.
+          </p>
+        </div>
+        {!viewer && (
+          <Link
+            href="/entry"
+            className="flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800"
+          >
+            <span>➕</span> הזנה ידנית
+          </Link>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-3 text-sm">
@@ -144,23 +146,6 @@ export default async function HomePage() {
           </div>
         )}
       </section>
-
-      {!viewer && (
-        <section className="space-y-2">
-          <h2 className="font-bold text-slate-800">הזנת חלוקה חדשה</h2>
-          {activeDepartments.length === 0 || activeItems.length === 0 ? (
-            <p className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm">
-              יש להוסיף תחילה מחלקות ופריטים בעמודים המתאימים.
-            </p>
-          ) : (
-            <AddDistributionForm
-              departments={activeDepartments}
-              items={activeItems}
-              recordedByOptions={recordedByOptions}
-            />
-          )}
-        </section>
-      )}
 
       <section className="space-y-2">
         <h2 className="font-bold text-slate-800">יומן מסירות אחרון</h2>

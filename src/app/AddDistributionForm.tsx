@@ -70,6 +70,18 @@ export function AddDistributionForm({
           className="input"
         />
       </label>
+      <label className="w-40">
+        <span className="mb-1 block text-sm font-medium text-slate-700">
+          תאריך *
+        </span>
+        <input
+          type="date"
+          name="date"
+          required
+          defaultValue={new Date().toISOString().slice(0, 10)}
+          className="input"
+        />
+      </label>
       <label className="flex-1 min-w-[10rem]">
         <span className="mb-1 block text-sm font-medium text-slate-700">
           שם העובד שמזין *
