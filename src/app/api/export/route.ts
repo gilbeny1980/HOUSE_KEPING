@@ -1,9 +1,14 @@
 import ExcelJS from "exceljs";
 import { prisma } from "@/lib/prisma";
 import { formatDateTime } from "@/lib/labels";
+import { monthKey, yearKey, formatMonthLabel } from "@/lib/period";
 
-export async function GET() {
-  const [departments, items, records] = await Promise.all([
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const mode = searchParams.get("mode") === "year" ? "year" : "month";
+  const period = searchParams.get("period");
+
+  const [departments, items, allRecords] = await Promise.all([
     prisma.department.findMany({ orderBy: { order: "asc" } }),
     prisma.item.findMany({ orderBy: { order: "asc" } }),
     prisma.distributionRecord.findMany({
@@ -11,6 +16,20 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     }),
   ]);
+
+  const records = period
+    ? allRecords.filter((r) =>
+        mode === "month"
+          ? monthKey(r.createdAt) === period
+          : yearKey(r.createdAt) === period,
+      )
+    : allRecords;
+
+  const periodLabel = period
+    ? mode === "month"
+      ? formatMonthLabel(period)
+      : period
+    : null;
 
   const totalsByDeptItem = new Map<string, Map<string, number>>();
   const totalByItem = new Map<string, number>();
@@ -98,7 +117,10 @@ export async function GET() {
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
-  const filename = `חלוקת-ציוד-${new Date().toISOString().slice(0, 10)}.xlsx`;
+  const filenamePeriod = periodLabel
+    ? periodLabel.replace(/\s+/g, "-")
+    : new Date().toISOString().slice(0, 10);
+  const filename = `חלוקת-ציוד-${filenamePeriod}.xlsx`;
 
   return new Response(buffer, {
     headers: {
