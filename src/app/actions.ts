@@ -34,11 +34,17 @@ export async function createDistributionRecord(formData: FormData) {
     throw new Error("כמות לא תקינה");
   }
 
+  const recordedBy = (formData.get("recordedBy") ?? "").toString().trim();
+  if (!recordedBy) {
+    throw new Error("יש להזין את שם העובד שמזין את הרישום");
+  }
+
   await prisma.distributionRecord.create({
     data: {
       departmentId,
       itemId,
       quantity,
+      recordedBy,
       note: asOrNull(formData.get("note")),
     },
   });

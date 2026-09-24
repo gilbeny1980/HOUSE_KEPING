@@ -9,9 +9,11 @@ type Item = { id: string; name: string; unit: string | null };
 export function AddDistributionForm({
   departments,
   items,
+  recordedByOptions,
 }: {
   departments: Department[];
   items: Item[];
+  recordedByOptions: string[];
 }) {
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -67,6 +69,23 @@ export function AddDistributionForm({
           step="any"
           className="input"
         />
+      </label>
+      <label className="flex-1 min-w-[10rem]">
+        <span className="mb-1 block text-sm font-medium text-slate-700">
+          שם העובד שמזין *
+        </span>
+        <input
+          name="recordedBy"
+          required
+          list="recorded-by-options"
+          className="input"
+          placeholder="שם מלא"
+        />
+        <datalist id="recorded-by-options">
+          {recordedByOptions.map((name) => (
+            <option key={name} value={name} />
+          ))}
+        </datalist>
       </label>
       <label className="flex-1 min-w-[10rem]">
         <span className="mb-1 block text-sm font-medium text-slate-700">

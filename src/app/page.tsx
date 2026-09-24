@@ -47,6 +47,13 @@ export default async function HomePage() {
   const rowDepartments = departments.filter((d) => totalByDept.has(d.id));
   const columnItems = items.filter((i) => totalByItem.has(i.id));
   const recentRecords = records.slice(0, 30);
+  const recordedByOptions = [
+    ...new Set(
+      records
+        .map((r) => r.recordedBy)
+        .filter((name): name is string => Boolean(name)),
+    ),
+  ].sort((a, b) => a.localeCompare(b, "he"));
 
   return (
     <div className="mx-auto max-w-5xl w-full px-4 py-6 space-y-6">
@@ -149,6 +156,7 @@ export default async function HomePage() {
             <AddDistributionForm
               departments={activeDepartments}
               items={activeItems}
+              recordedByOptions={recordedByOptions}
             />
           )}
         </section>
@@ -156,40 +164,79 @@ export default async function HomePage() {
 
       <section className="space-y-2">
         <h2 className="font-bold text-slate-800">יומן מסירות אחרון</h2>
-        <div className="rounded-lg border border-slate-200 bg-white shadow-sm divide-y divide-slate-100">
-          {recentRecords.length === 0 ? (
-            <p className="p-6 text-center text-slate-500">אין רשומות עדיין</p>
-          ) : (
-            recentRecords.map((record) => (
-              <div
-                key={record.id}
-                className="flex flex-wrap items-center justify-between gap-2 p-3"
-              >
-                <div>
-                  <div className="font-medium">
-                    {record.department.name} לקח/ה {formatQty(record.quantity)}{" "}
-                    {record.item.name}
-                    {record.item.unit ? ` (${record.item.unit})` : ""}
-                  </div>
-                  <div className="text-xs text-slate-400">
-                    {formatDateTime(record.createdAt)}
-                    {record.note ? ` · ${record.note}` : ""}
-                  </div>
-                </div>
-                {!viewer && (
-                  <form action={deleteDistributionRecord.bind(null, record.id)}>
-                    <button
-                      type="submit"
-                      className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50"
-                    >
-                      מחיקה
-                    </button>
-                  </form>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+        {recentRecords.length === 0 ? (
+          <p className="rounded-lg border border-slate-200 bg-white p-6 text-center text-slate-500 shadow-sm">
+            אין רשומות עדיין
+          </p>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+            <table className="w-full min-w-max text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50">
+                  <th className="p-2 text-right font-medium text-slate-600">
+                    תאריך
+                  </th>
+                  <th className="p-2 text-right font-medium text-slate-600">
+                    מחלקה
+                  </th>
+                  <th className="p-2 text-right font-medium text-slate-600">
+                    פריט
+                  </th>
+                  <th className="p-2 text-center font-medium text-slate-600">
+                    כמות
+                  </th>
+                  <th className="p-2 text-right font-medium text-slate-600">
+                    הוזן ע&quot;י
+                  </th>
+                  <th className="p-2 text-right font-medium text-slate-600">
+                    הערה
+                  </th>
+                  {!viewer && <th className="p-2"></th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {recentRecords.map((record) => (
+                  <tr key={record.id}>
+                    <td className="p-2 whitespace-nowrap text-slate-500">
+                      {formatDateTime(record.createdAt)}
+                    </td>
+                    <td className="p-2 font-medium">
+                      {record.department.name}
+                    </td>
+                    <td className="p-2">
+                      {record.item.name}
+                      {record.item.unit ? ` (${record.item.unit})` : ""}
+                    </td>
+                    <td className="p-2 text-center">
+                      {formatQty(record.quantity)}
+                    </td>
+                    <td className="p-2">{record.recordedBy ?? "—"}</td>
+                    <td className="p-2 text-slate-500">
+                      {record.note ?? "—"}
+                    </td>
+                    {!viewer && (
+                      <td className="p-2">
+                        <form
+                          action={deleteDistributionRecord.bind(
+                            null,
+                            record.id,
+                          )}
+                        >
+                          <button
+                            type="submit"
+                            className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50"
+                          >
+                            מחיקה
+                          </button>
+                        </form>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </div>
   );

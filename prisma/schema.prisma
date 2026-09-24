@@ -31,10 +31,11 @@ model Item {
 }
 
 model DistributionRecord {
-  id        String   @id @default(cuid())
-  quantity  Float
-  note      String?
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  quantity   Float
+  note       String?
+  recordedBy String?
+  createdAt  DateTime @default(now())
 
   departmentId String
   department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)

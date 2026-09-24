@@ -100,6 +100,7 @@ export async function GET(request: Request) {
     { header: "מחלקה", key: "department", width: 24 },
     { header: "פריט", key: "item", width: 20 },
     { header: "כמות", key: "quantity", width: 10 },
+    { header: 'הוזן ע"י', key: "recordedBy", width: 20 },
     { header: "הערה", key: "note", width: 30 },
   ];
   logSheet.getRow(1).font = { bold: true };
@@ -112,6 +113,7 @@ export async function GET(request: Request) {
         ? `${record.item.name} (${record.item.unit})`
         : record.item.name,
       quantity: record.quantity,
+      recordedBy: record.recordedBy ?? "",
       note: record.note ?? "",
     });
   }
