@@ -62,6 +62,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   >
                     פריטים
                   </Link>
+                  <Link
+                    href="/inventory"
+                    className="hover:text-amber-300 transition-colors"
+                  >
+                    מלאי
+                  </Link>
                 </>
               )}
             </nav>

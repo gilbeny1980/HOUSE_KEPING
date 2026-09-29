@@ -41,7 +41,8 @@ export default async function EntryPage() {
         <div>
           <h1 className="text-xl font-bold">הזנה ידנית</h1>
           <p className="text-sm text-slate-500">
-            שם העובד שמזין, המחלקה, הפריט, הכמות והתאריך של המסירה.
+            שם העובד שמזין, המחלקה, התאריך, וכמות לכל פריט שנלקח (אפשר כמה
+            פריטים יחד). המלאי מתעדכן אוטומטית.
           </p>
         </div>
         <Link
